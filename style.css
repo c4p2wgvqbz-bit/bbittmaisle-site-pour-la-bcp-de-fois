@@ -1,0 +1,181 @@
+:root{
+  --bg:#0b0b0f; --card:#0f1113; --muted:#9aa3b2;
+  --accent:#32C0C1; --accent-2:#F53098; --text:#e9eef6;
+  --glass: rgba(255,255,255,0.035);
+  --radius:12px; --maxw:1100px; --container-pad:20px;
+}
+
+/* Light theme overrides */
+:root[data-theme="light"]{
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --muted: #58606b;
+  --text: #071014;
+  --glass: rgba(7,16,20,0.03);
+}
+
+*{box-sizing:border-box}
+html,body{
+  height:100%;
+  margin:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+
+.container{max-width:var(--maxw);margin:0 auto;padding:32px var(--container-pad)}
+
+/* Header */
+.site-header{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,rgba(6,6,8,0.55),rgba(6,6,8,0.25));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03)}
+:root[data-theme="light"] .site-header{ background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.8)); border-bottom:1px solid rgba(7,16,20,0.04) }
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+
+/* Logo: increased size proportionally and centered in header area */
+.logo{width:120px;height:120px;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent;padding:6px}
+.logo img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
+
+/* Brand text */
+.brand-text .title{font-weight:700;font-size:16px;letter-spacing:0.6px}
+.brand-text .subtitle{font-size:12px;color:var(--muted)}
+
+/* Nav */
+.mini-nav{display:flex;gap:12px;align-items:center}
+.nav-item{background:transparent;border:0;color:var(--text);padding:8px 10px;border-radius:8px;cursor:pointer;position:relative;font-weight:600}
+.nav-item:focus{outline:2px solid rgba(255,255,255,0.06);outline-offset:3px}
+.badge{display:inline-block;background:#ff4d6d;color:#fff;border-radius:8px;padding:2px 6px;font-size:11px;margin-left:8px}
+
+/* Theme toggle */
+.theme-toggle{display:inline-flex;align-items:center;gap:8px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);cursor:pointer}
+.theme-toggle svg{opacity:0.45;transition:opacity .18s ease, transform .18s ease}
+.theme-toggle.is-light .icon-sun{opacity:1; transform:scale(1.05)}
+.theme-toggle.is-dark .icon-moon{opacity:1; transform:scale(1.05)}
+
+/* Hero */
+.hero{display:flex;flex-direction:column;align-items:flex-start;gap:18px;padding-top:42px;padding-bottom:42px}
+.hero h1{font-size:36px;margin:0}
+.hero-lead{color:var(--muted);margin:0;max-width:720px}
+
+/* OVAL BUTTON (general) */
+.oval-btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius:999px;
+  padding:12px 22px;
+  border:0;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+  box-shadow: 0 8px 18px rgba(11,12,15,0.18);
+  text-decoration:none;
+  font-size:14px;
+}
+
+/* Large variant used for prominent CTA (En savoir plus) */
+.oval-btn.large{
+  padding:14px 32px;
+  font-size:15px;
+  box-shadow: 0 18px 36px rgba(50,192,193,0.12);
+}
+
+/* Primary oval (En savoir plus) -> gradient cyan→rose */
+.oval-btn.oval-primary{
+  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  color: #071014;
+  border: none;
+}
+.oval-btn.oval-primary:hover{transform:translateY(-2px);filter:brightness(1.03)}
+.oval-btn.oval-primary:focus{outline:3px solid rgba(50,192,193,0.12);outline-offset:3px}
+
+/* Neutral oval (Discover) — color depends on theme.
+   Light theme: dark oval with white text.
+   Dark theme: white oval with dark text. */
+:root[data-theme="light"] .oval-btn.oval-neutral {
+  background: #071014;
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(7,16,20,0.06);
+  border:1px solid rgba(7,16,20,0.04);
+}
+:root[data-theme="light"] .oval-btn.oval-neutral:hover{
+  background:#0f1720;
+  color:#fff;
+}
+
+:root:not([data-theme="light"]) .oval-btn.oval-neutral {
+  background: #ffffff;
+  color: #071014;
+  box-shadow: 0 8px 24px rgba(2,8,12,0.06);
+  border:1px solid rgba(0,0,0,0.06);
+}
+:root:not([data-theme="light"]) .oval-btn.oval-neutral:hover{
+  background:#f4f4f6;
+}
+
+/* Content grid */
+.content{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;grid-auto-rows:minmax(240px,auto);padding-bottom:60px}
+
+/* Card */
+.card{background:var(--card);padding:24px;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;min-height:240px}
+:root[data-theme="light"] .card{box-shadow:0 8px 24px rgba(2,8,12,0.06);border:1px solid rgba(7,16,20,0.04)}
+.card-inner{display:flex;flex-direction:column;gap:12px;flex:1}
+.card-actions{display:flex;gap:8px;margin-top:auto}
+.card h2{margin:0 0 8px 0;font-size:22px}
+.card p{color:var(--muted);margin:0 0 12px 0;line-height:1.6;max-width:100%}
+
+/* EP GRID & FLIP CARDS */
+.ep-grid{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.ep-card{position:relative;width:200px;height:120px;border-radius:12px;cursor:pointer;perspective:1000px;overflow:visible}
+.ep-card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s}
+.ep-card.flipped .ep-card-inner{transform:rotateY(180deg)}
+.ep-front,.ep-back{position:absolute;inset:0;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;backface-visibility:hidden;overflow:hidden}
+.ep-front{background-color:var(--card); color:var(--text); font-weight:700;text-align:center}
+.ep-front span{display:block;font-weight:400;font-size:13px;color:var(--muted)}
+.ep-back{background:var(--card); color:var(--text); transform:rotateY(180deg); text-align:center; padding:12px; justify-content:space-between}
+.ep-back p.ep-summary{font-weight:500;color:var(--muted);margin:0 0 12px 0;line-height:1.4; text-align:left; width:100%; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;}
+.ep-back .btn-visionner{display:inline-flex;align-items:center;gap:8px; align-self:flex-end; margin-top:8px}
+
+/* Video wrapper inside overlay */
+.video-wrap{position:relative;padding-top:56.25%;width:100%}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:8px}
+
+/* Buttons */
+.btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:var(--text);cursor:pointer;font-weight:700}
+.btn.small{padding:6px 8px;font-size:13px}
+.btn.disabled{opacity:0.45;cursor:default;border-style:dashed}
+
+/* Overlay */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:200}
+.overlay.hidden{display:none}
+.overlay-inner{background:linear-gradient(180deg,#0b0b0f,#0f1113);padding:28px;border-radius:12px;max-width:880px;width:92%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.6);color:var(--text)}
+:root[data-theme="light"] .overlay-inner{background:linear-gradient(180deg,#ffffff,#f7f8fb);color:var(--text);border:1px solid rgba(7,16,20,0.06)}
+.overlay .close{position:absolute;top:12px;right:12px;border:0;background:transparent;color:var(--muted);font-size:20px;cursor:pointer}
+.overlay-content{max-height:70vh;overflow:auto;padding-right:6px}
+
+/* Footer: minimal, balanced left/right */
+.site-footer{padding:12px 0;background:transparent}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+.footer-inner .left,.footer-inner .right{opacity:0.95}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(14px);transition:all .6s cubic-bezier(.2,.9,.2,1)}
+.reveal.visible{opacity:1;transform:none}
+
+/* Responsive logo sizes */
+@media (max-width:1100px){
+  .logo{width:96px;height:96px}
+  .content{grid-template-columns:1fr;gap:20px;padding:12px 20px}
+  .card{min-height:auto;padding:20px}
+  .ep-grid{justify-content:flex-start;overflow:auto;padding-bottom:6px}
+  .ep-card{width:160px;height:100px}
+}
+@media (max-width:480px){
+  .hero h1{font-size:24px}
+  .oval-btn{width:100%;justify-content:center}
+  .logo{width:64px;height:64px}
+  .oval-btn.large{padding:12px 20px;font-size:15px}
+  .ep-card{width:100%;height:140px}
+  .ep-grid{flex-direction:column;gap:12px}
+}
