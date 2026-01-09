@@ -16,34 +16,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeToggle = $('#theme-toggle');
   const THEME_KEY = 'brad_theme_pref';
   // NEWS_VERSION: increment this string when you publish a new "Nouveautés" entry
- const NEWS_VERSION = '1';
-const NEWS_READ_KEY = 'brad_news_seen_version';
+  const NEWS_VERSION = '1';
+  const NEWS_READ_KEY = 'brad_news_seen_version';
 
-function refreshNewsBadge() {
-  if (!newsBadge) return;
-
-  const seenVersion = localStorage.getItem(NEWS_READ_KEY);
-
-  if (seenVersion === NEWS_VERSION) {
-    newsBadge.hidden = true;
-  } else {
-    newsBadge.hidden = false;
+  /* NEWS badge logic (single implementation) */
+  function refreshNewsBadge() {
+    try {
+      if (!newsBadge) return;
+      const seen = localStorage.getItem(NEWS_READ_KEY);
+      newsBadge.hidden = (seen === NEWS_VERSION);
+    } catch (e) { /* ignore */ }
   }
-}
 
-function markNewsRead() {
-  localStorage.setItem(NEWS_READ_KEY, NEWS_VERSION);
-  newsBadge.hidden = true;
-}
+  function markNewsRead() {
+    try {
+      localStorage.setItem(NEWS_READ_KEY, NEWS_VERSION);
+      if (newsBadge) newsBadge.hidden = true;
+    } catch (e) {}
+  }
 
-// Au chargement
-refreshNewsBadge();
+  // Au chargement
+  refreshNewsBadge();
 
-// Au clic sur "Nouveautés"
-newsBtn.addEventListener('click', () => {
-  markNewsRead();
-  openPanel('news');
-});
+  // Au clic sur "Nouveautés"
+  if (newsBtn) {
+    newsBtn.addEventListener('click', () => {
+      markNewsRead();
+      openPanel('news');
+    });
+  }
+
+  // Cliquer sur le badge marque aussi comme lu
+  if (newsBadge) {
+    newsBadge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      markNewsRead();
+    });
+  }
 
   // Panels content (welcome = en savoir plus)
   const PANELS = {
@@ -54,7 +63,7 @@ newsBtn.addEventListener('click', () => {
 
       <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l’histoire qui se dessine en arrière-plan.</p>
 
-      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution du projet.</p>
+      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution d[...]</p>
 
       <p>Utilisez les boutons « Découvrir » et « Voir » pour naviguer librement entre les contenus.</p>
     `,
@@ -67,40 +76,6 @@ newsBtn.addEventListener('click', () => {
       <p>Aperçu du jeu, mécaniques et notes de développement.</p>
     `
   };
-
-  /* NEWS badge logic */
-  function refreshNewsBadge() {
-    try {
-      const seen = localStorage.getItem(NEWS_READ_KEY);
-      if (!newsBadge) return;
-      // If stored version equals current, hide the badge; otherwise show (first load)
-      newsBadge.hidden = (seen === NEWS_VERSION);
-    } catch (e) { /* ignore */ }
-  }
-  refreshNewsBadge();
-
-  // Mark news as read (store the current version)
-  function markNewsRead() {
-    try {
-      localStorage.setItem(NEWS_READ_KEY, NEWS_VERSION);
-      if (newsBadge) newsBadge.hidden = true;
-    } catch (e) {}
-  }
-
-  // Clicking the news button opens the panel and marks read
-  if (newsBtn) {
-    newsBtn.addEventListener('click', () => {
-      markNewsRead();
-      openPanel('news');
-    });
-  }
-  // Clicking the badge itself should also mark it read
-  if (newsBadge) {
-    newsBadge.addEventListener('click', (e) => {
-      e.stopPropagation();
-      markNewsRead();
-    });
-  }
 
   /* Overlay open/close + video player injection */
   let lastFocused = null;
@@ -171,18 +146,36 @@ newsBtn.addEventListener('click', () => {
     openPanel(null, { html: playerHtml });
   });
 
-  /* Theme init + toggle (light/dark/auto) */
-    applyTheme(next, true);
-updateLogoForTheme(next);
+  /* Theme: robust, simple implementation */
+  const logoImg = document.getElementById('site-logo');
+
+  function updateLogoForTheme(pref) {
+    if (!logoImg) return;
+
+    if (pref === 'light') {
+      logoImg.src = 'image/logo bb site sombre.png';
+    } else if (pref === 'dark') {
+      logoImg.src = 'image/logo bb site clair.png';
+    } else {
+      const isLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      logoImg.src = isLight
+        ? 'image/logo bb site sombre.png'
+        : 'image/logo bb site clair.png';
+    }
+  }
+
+  function applyTheme(pref = 'auto', save = false) {
     try {
       const root = document.documentElement;
+
       if (pref === 'light') {
         root.setAttribute('data-theme', 'light');
       } else if (pref === 'dark') {
         root.removeAttribute('data-theme');
       } else {
         // auto
-        const isLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        const mm = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+        const isLight = mm ? mm.matches : true;
         if (isLight) root.setAttribute('data-theme', 'light');
         else root.removeAttribute('data-theme');
       }
@@ -197,6 +190,8 @@ updateLogoForTheme(next);
         themeToggle.setAttribute('title', title);
         themeToggle.setAttribute('aria-label', title);
       }
+
+      updateLogoForTheme(pref);
 
       if (save) {
         try { localStorage.setItem(THEME_KEY, pref); } catch(e) {}
@@ -219,22 +214,7 @@ updateLogoForTheme(next);
       applyTheme(next, true);
     });
   }
-const logoImg = document.getElementById('site-logo');
 
-function updateLogoForTheme(pref) {
-  if (!logoImg) return;
-
-  if (pref === 'light') {
-    logoImg.src = 'image/logo bb site sombre.png';
-  } else if (pref === 'dark') {
-    logoImg.src = 'image/logo bb site clair.png';
-  } else {
-    const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-    logoImg.src = isLight
-      ? 'image/logo bb site sombre.png'
-      : 'image/logo bb site clair.png';
-  }
-}
   /* helper to aid future deployments */
   window.__brad_setNewsVersion = (ver) => {
     try { localStorage.removeItem(NEWS_READ_KEY); } catch (e) {}
