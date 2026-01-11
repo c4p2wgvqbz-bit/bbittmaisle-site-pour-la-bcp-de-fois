@@ -19,21 +19,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const NEWS_VERSION = '1';
   const NEWS_READ_KEY = 'brad_news_seen_version';
 
-  /* NEWS badge logic (single, robust implementation) */
+  /* NEWS badge logic (robuste) */
   function refreshNewsBadge() {
     try {
       if (!newsBadge) return;
       const seen = localStorage.getItem(NEWS_READ_KEY);
-      // If stored version equals current, hide the badge; otherwise show (first load)
-      newsBadge.hidden = (seen === NEWS_VERSION);
-    } catch (e) { /* ignore */ }
+      // show badge when seen is not equal to current version (including first visit: seen === null)
+      const shouldShow = !(seen === NEWS_VERSION);
+      newsBadge.hidden = !shouldShow ? true : false;
+    } catch (e) {
+      // If localStorage unavailable, default to showing badge
+      if (newsBadge) newsBadge.hidden = false;
+    }
   }
 
   function markNewsRead() {
     try {
       localStorage.setItem(NEWS_READ_KEY, NEWS_VERSION);
-      if (newsBadge) newsBadge.hidden = true;
-    } catch (e) {}
+    } catch (e) { /* ignore */ }
+    if (newsBadge) newsBadge.hidden = true;
   }
 
   // initialize badge on load
@@ -145,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     openPanel(null, { html: playerHtml });
   });
 
-  /* Theme: robust, simple implementation + logo switching */
+  /* Theme: robust, simple implementation + logo switching (folder 'images') */
   const logoImg = document.getElementById('site-logo');
 
   // Map: when theme is 'light' -> use the *sombre* logo; when 'dark' -> use the *clair* logo.
@@ -154,17 +158,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (pref === 'light') {
       // light theme => use the dark (sombre) logo for contrast
-      logoImg.src = 'image/logo bb site sombre.png';
+      logoImg.src = 'images/logo bb site sombre.png';
     } else if (pref === 'dark') {
       // dark theme => use the light (clair) logo for contrast
-      logoImg.src = 'image/logo bb site clair.png';
+      logoImg.src = 'images/logo bb site clair.png';
     } else {
       // auto: pick according to prefers-color-scheme
       const mm = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
       const isLight = mm ? mm.matches : true;
       logoImg.src = isLight
-        ? 'image/logo bb site sombre.png'
-        : 'image/logo bb site clair.png';
+        ? 'images/logo bb site sombre.png'
+        : 'images/logo bb site clair.png';
     }
   }
 
