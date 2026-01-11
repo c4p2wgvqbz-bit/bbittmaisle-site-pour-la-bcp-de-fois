@@ -1,5 +1,4 @@
 // script.js — gestion badge / thèmes / overlays / ep-cards / lecteur vidéo
-
 document.addEventListener('DOMContentLoaded', () => {
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -15,32 +14,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const ovalLearn = $('#oval-learn');
   const themeToggle = $('#theme-toggle');
   const THEME_KEY = 'brad_theme_pref';
-  // NEWS_VERSION: increment this string when you publish a new "Nouveautés" entry
-  const NEWS_VERSION = '1';
-  const NEWS_READ_KEY = 'brad_news_seen_version';
+  // Nouveau comportement du badge : clé simple boolean
+  const NEWS_SEEN_KEY = 'brad_news_seen';
 
-  /* NEWS badge logic (robuste) */
+  /* NEWS badge logic (simple + robuste) */
   function refreshNewsBadge() {
     try {
       if (!newsBadge) return;
-      const seen = localStorage.getItem(NEWS_READ_KEY);
-      // show badge when seen is not equal to current version (including first visit: seen === null)
-      const shouldShow = !(seen === NEWS_VERSION);
-      newsBadge.hidden = !shouldShow ? true : false;
+      const seen = localStorage.getItem(NEWS_SEEN_KEY);
+      // Si jamais vu = 'true' -> cacher, sinon afficher (première visite ou réinitialisation)
+      newsBadge.hidden = (seen === 'true');
     } catch (e) {
-      // If localStorage unavailable, default to showing badge
+      // si localStorage indisponible, afficher par précaution
       if (newsBadge) newsBadge.hidden = false;
     }
   }
 
   function markNewsRead() {
     try {
-      localStorage.setItem(NEWS_READ_KEY, NEWS_VERSION);
+      localStorage.setItem(NEWS_SEEN_KEY, 'true');
     } catch (e) { /* ignore */ }
     if (newsBadge) newsBadge.hidden = true;
   }
 
-  // initialize badge on load
+  // utilitaire pour réactiver le badge (tests / mise à jour manuelle)
+  window.__brad_resetNews = () => {
+    try { localStorage.removeItem(NEWS_SEEN_KEY); } catch (e) {}
+    refreshNewsBadge();
+    console.log('Badge "Nouveautés" réactivé (localStorage supprimé).');
+  };
+
+  // initialise le badge au chargement
   refreshNewsBadge();
 
   // click handlers
@@ -149,10 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
     openPanel(null, { html: playerHtml });
   });
 
-  /* Theme: robust, simple implementation + logo switching (folder 'images') */
+  /* Theme: robuste + logo switching (folder 'images') */
   const logoImg = document.getElementById('site-logo');
 
-  // Map: when theme is 'light' -> use the *sombre* logo; when 'dark' -> use the *clair* logo.
+  // Mapping explicite : light -> use 'sombre' logo, dark -> use 'clair' logo
   function updateLogoForTheme(pref) {
     if (!logoImg) return;
 
@@ -163,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // dark theme => use the light (clair) logo for contrast
       logoImg.src = 'images/logo bb site clair.png';
     } else {
-      // auto: pick according to prefers-color-scheme
+      // auto: pick according to prefers-color-scheme and apply same mapping
       const mm = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
       const isLight = mm ? mm.matches : true;
       logoImg.src = isLight
@@ -199,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggle.setAttribute('aria-label', title);
       }
 
-      // update logo according to the mapping requested
+      // update logo according to mapping requested
       updateLogoForTheme(pref);
 
       if (save) {
@@ -223,12 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
       applyTheme(next, true);
     });
   }
-
-  /* helper to aid future deployments */
-  window.__brad_setNewsVersion = (ver) => {
-    try { localStorage.removeItem(NEWS_READ_KEY); } catch (e) {}
-    console.log('To show the badge to users, update NEWS_VERSION in script and deploy with new version:', ver);
-  };
 
   /* --- Reveal elements on load --- */
   (function revealOnLoad() {
