@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       newsBadge.hidden = (seen === 'true');
     } catch (e) {
       // si localStorage indisponible, afficher par précaution
-      if (newsBadge) newsBadge.hidden = false;
+      if (newsBadge) newsBadge.hidden = true;
     }
   }
 
