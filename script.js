@@ -171,8 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const mm = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
       const isLight = mm ? mm.matches : true;
       logoImg.src = isLight
-        ? 'images/logo bb site sombre.png'
-        : 'images/logo bb site clair.png';
+        ? 'images/logo bb site clair.png'
+        : 'images/logo bb site sombre.png';
     }
   }
 
