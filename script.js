@@ -162,10 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (pref === 'light') {
       // light theme => use the dark (sombre) logo for contrast
-      logoImg.src = 'images/logo bb site sombre.png';
+      logoImg.src = 'images/logo bb site clair.png';
     } else if (pref === 'dark') {
       // dark theme => use the light (clair) logo for contrast
-      logoImg.src = 'images/logo bb site clair.png';
+      logoImg.src = 'images/logo bb site sombre.png';
     } else {
       // auto: pick according to prefers-color-scheme and apply same mapping
       const mm = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
