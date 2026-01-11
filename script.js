@@ -19,11 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const NEWS_VERSION = '1';
   const NEWS_READ_KEY = 'brad_news_seen_version';
 
-  /* NEWS badge logic (single implementation) */
+  /* NEWS badge logic (single, robust implementation) */
   function refreshNewsBadge() {
     try {
       if (!newsBadge) return;
       const seen = localStorage.getItem(NEWS_READ_KEY);
+      // If stored version equals current, hide the badge; otherwise show (first load)
       newsBadge.hidden = (seen === NEWS_VERSION);
     } catch (e) { /* ignore */ }
   }
@@ -35,18 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
-  // Au chargement
+  // initialize badge on load
   refreshNewsBadge();
 
-  // Au clic sur "Nouveautés"
+  // click handlers
   if (newsBtn) {
     newsBtn.addEventListener('click', () => {
       markNewsRead();
       openPanel('news');
     });
   }
-
-  // Cliquer sur le badge marque aussi comme lu
   if (newsBadge) {
     newsBadge.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -146,18 +145,23 @@ document.addEventListener('DOMContentLoaded', () => {
     openPanel(null, { html: playerHtml });
   });
 
-  /* Theme: robust, simple implementation */
+  /* Theme: robust, simple implementation + logo switching */
   const logoImg = document.getElementById('site-logo');
 
+  // Map: when theme is 'light' -> use the *sombre* logo; when 'dark' -> use the *clair* logo.
   function updateLogoForTheme(pref) {
     if (!logoImg) return;
 
     if (pref === 'light') {
+      // light theme => use the dark (sombre) logo for contrast
       logoImg.src = 'image/logo bb site sombre.png';
     } else if (pref === 'dark') {
+      // dark theme => use the light (clair) logo for contrast
       logoImg.src = 'image/logo bb site clair.png';
     } else {
-      const isLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      // auto: pick according to prefers-color-scheme
+      const mm = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+      const isLight = mm ? mm.matches : true;
       logoImg.src = isLight
         ? 'image/logo bb site sombre.png'
         : 'image/logo bb site clair.png';
@@ -191,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggle.setAttribute('aria-label', title);
       }
 
+      // update logo according to the mapping requested
       updateLogoForTheme(pref);
 
       if (save) {
@@ -199,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { /* ignore */ }
   }
 
-  // initial read
+  // initial read + apply
   try {
     const saved = localStorage.getItem(THEME_KEY) || 'auto';
     applyTheme(saved, false);
@@ -221,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('To show the badge to users, update NEWS_VERSION in script and deploy with new version:', ver);
   };
 
-  /* --- Fix: reveal elements on load --- */
+  /* --- Reveal elements on load --- */
   (function revealOnLoad() {
     const reveals = $$('.reveal');
     if (!reveals.length) return;
