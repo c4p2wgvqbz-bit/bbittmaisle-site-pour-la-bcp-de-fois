@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l’histoire qui se dessine en arrière-plan.</p>
 
-      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution d[...]</p>
+      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution du projet.</p>
 
       <p>Utilisez les boutons « Découvrir » et « Voir » pour naviguer librement entre les contenus.</p>
     `,
