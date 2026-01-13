@@ -23,16 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!newsBadge) return;
       const seen = localStorage.getItem(NEWS_SEEN_KEY);
       // Si jamais vu = 'true' -> cacher, sinon afficher (première visite ou réinitialisation)
-      const isSeen = (seen === 'true');
-      newsBadge.hidden = isSeen;
-      // forcer le style d'affichage pour contourner d'éventuelles règles CSS propriétaires
-      newsBadge.style.display = isSeen ? 'none' : '';
+      newsBadge.hidden = (seen === 'true');
     } catch (e) {
       // si localStorage indisponible, afficher par précaution
-      if (newsBadge) {
-        newsBadge.hidden = false;
-        newsBadge.style.display = '';
-      }
+      if (newsBadge) newsBadge.hidden = true;
     }
   }
 
@@ -40,10 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       localStorage.setItem(NEWS_SEEN_KEY, 'true');
     } catch (e) { /* ignore */ }
-    if (newsBadge) {
-      newsBadge.hidden = true;
-      newsBadge.style.display = 'none';
-    }
+    if (newsBadge) newsBadge.hidden = true;
   }
 
   // utilitaire pour réactiver le badge (tests / mise à jour manuelle)
@@ -78,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l’histoire qui se dessine en arrière-plan.</p>
 
-      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution d[...]
+      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution du projet.</p>
 
       <p>Utilisez les boutons « Découvrir » et « Voir » pour naviguer librement entre les contenus.</p>
     `,
