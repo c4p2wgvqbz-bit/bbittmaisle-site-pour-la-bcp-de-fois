@@ -17,79 +17,40 @@ document.addEventListener('DOMContentLoaded', () => {
   // Nouveau comportement du badge : clé simple boolean
   const NEWS_SEEN_KEY = 'brad_news_seen';
 
-  /* Utility: cookie helpers (used as fallback when localStorage is blocked) */
-  function setCookie(name, value, days = 3650) { // long-lived by default (~10 ans)
-    try {
-      const maxAge = days * 24 * 60 * 60;
-      document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; samesite=lax`;
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-  function getCookie(name) {
-    try {
-      const re = new RegExp('(?:^|; )' + encodeURIComponent(name) + '=([^;]*)');
-      const m = document.cookie.match(re);
-      return m ? decodeURIComponent(m[1]) : null;
-    } catch (e) {
-      return null;
-    }
-  }
-  function removeCookie(name) {
-    try {
-      document.cookie = `${encodeURIComponent(name)}=; max-age=0; path=/; samesite=lax`;
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /* NEWS badge logic (robuste) */
-  function isNewsSeenStored() {
-    try {
-      const val = localStorage.getItem(NEWS_SEEN_KEY);
-      return val === 'true';
-    } catch (e) {
-      // localStorage inaccessible -> fall back to cookie
-      return getCookie(NEWS_SEEN_KEY) === '1';
-    }
-  }
-
-  function setNewsSeenStored() {
-    let persisted = false;
-    try {
-      localStorage.setItem(NEWS_SEEN_KEY, 'true');
-      persisted = true;
-    } catch (e) {
-      // fallback to cookie
-      persisted = setCookie(NEWS_SEEN_KEY, '1');
-    }
-    return persisted;
-  }
-
-  function clearNewsSeenStored() {
-    try { localStorage.removeItem(NEWS_SEEN_KEY); } catch (e) {}
-    try { removeCookie(NEWS_SEEN_KEY); } catch (e) {}
-  }
-
+  /* NEWS badge logic (simple + robuste) */
   function refreshNewsBadge() {
-    if (!newsBadge) return;
-    const seen = isNewsSeenStored();
-    // Si déjà vu -> cacher, sinon afficher
-    newsBadge.hidden = !!seen;
+    try {
+      if (!newsBadge) return;
+      const seen = localStorage.getItem(NEWS_SEEN_KEY);
+      // Si jamais vu = 'true' -> cacher, sinon afficher (première visite ou réinitialisation)
+      const isSeen = (seen === 'true');
+      newsBadge.hidden = isSeen;
+      // forcer le style d'affichage pour contourner d'éventuelles règles CSS propriétaires
+      newsBadge.style.display = isSeen ? 'none' : '';
+    } catch (e) {
+      // si localStorage indisponible, afficher par précaution
+      if (newsBadge) {
+        newsBadge.hidden = false;
+        newsBadge.style.display = '';
+      }
+    }
   }
 
   function markNewsRead() {
-    setNewsSeenStored();
-    if (newsBadge) newsBadge.hidden = true;
+    try {
+      localStorage.setItem(NEWS_SEEN_KEY, 'true');
+    } catch (e) { /* ignore */ }
+    if (newsBadge) {
+      newsBadge.hidden = true;
+      newsBadge.style.display = 'none';
+    }
   }
 
   // utilitaire pour réactiver le badge (tests / mise à jour manuelle)
   window.__brad_resetNews = () => {
-    clearNewsSeenStored();
+    try { localStorage.removeItem(NEWS_SEEN_KEY); } catch (e) {}
     refreshNewsBadge();
-    console.log('Badge "Nouveautés" réactivé (localStorage/cookie supprimé).');
+    console.log('Badge "Nouveautés" réactivé (localStorage supprimé).');
   };
 
   // initialise le badge au chargement
