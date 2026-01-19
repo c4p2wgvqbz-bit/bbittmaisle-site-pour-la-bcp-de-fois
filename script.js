@@ -62,6 +62,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ajoute d'autres entrées ici si nécessaire
   ];
 
+  // Panels content (welcome = en savoir plus)
+  const PANELS = {
+    welcome: `
+      <h2>En savoir plus</h2>
+      <p>Ce site rassemble tout ce qui gravite autour de Brad Bitt : les expériences interactives, les épisodes, les ambiances sonores et les éléments de récit qui donnent vie à ce monde.</p>
+
+      <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l’histoire qui se dessine en arrière-plan.</p>
+
+      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution du projet.</p>
+
+      <p>Utilisez les boutons « Découvrir » et « Voir » pour naviguer librement entre les contenus.</p>
+    `,
+    news: `
+      <h2>Nouveautés</h2>
+      <p>C’est ici que vous trouverez les dernières mises à jour du site et des contenus ajoutés récemment.</p>
+    `,
+    game: `
+      <h2>Brad Bitt — Le jeu</h2>
+      <p>Aperçu du jeu, mécaniques et notes de développement.</p>
+    `
+  };
+
   function buildNewsHtml() {
     const items = NEWS_HISTORY.map((n, idx) => `
       <article class="news-card" tabindex="0" data-index="${idx}" aria-expanded="false">
