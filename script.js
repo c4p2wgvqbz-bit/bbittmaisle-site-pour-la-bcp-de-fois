@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const ovalLearn = $('#oval-learn');
   const themeToggle = $('#theme-toggle');
   const THEME_KEY = 'brad_theme_pref';
-  // Nouveau comportement du badge : plus de persistence (masquage uniquement au clic)
+  // NEWS: plus de persistence — le badge disparait uniquement au clic (runtime)
   const NEWS_SEEN_KEY = 'brad_news_seen';
 
-  /* NEWS badge logic (simple: show on load, hide on click; no persistence) */
+  /* NEWS badge logic (show on load, hide on click; no persistence) */
   function refreshNewsBadge() {
     if (!newsBadge) return;
     // Forcer l'affichage au chargement (runtime uniquement)
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // utilitaire pour réactiver le badge (runtime, sans toucher au stockage)
+  // utilitaire runtime pour réactiver le badge
   window.__brad_resetNews = () => {
     if (newsBadge) {
       newsBadge.hidden = false;
@@ -41,50 +41,75 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Badge "Nouveautés" réactivé (runtime).');
   };
 
-  // initialise le badge au chargement
+  // initialize badge
   refreshNewsBadge();
 
-  // click handlers
-  if (newsBtn) {
-    newsBtn.addEventListener('click', () => {
-      markNewsRead();
-      openPanel('news');
+  // --- NEWS history data (modifiable facilement) ---
+  // Chaque entrée : { version, date, teaser, detailHtml }
+  const NEWS_HISTORY = [
+    {
+      version: '1.1',
+      date: '2026-01-19',
+      teaser: 'Améliorations du panneau Nouveautés, correctifs UI et bouton "Suivi du jeu".',
+      detailHtml: `<p>Correction du badge "Nouveautés" (masquage au clic sans persistance), ajout d'un historique des versions dans le panneau, bouton "Suivi du jeu" ajouté dans la carte jeu. Corrections d'affichage pour les résumés des épisodes.</p>`
+    },
+    {
+      version: '1.0',
+      date: '2025-12-01',
+      teaser: 'Lancement initial du site vitrine.',
+      detailHtml: `<p>Première version publique contenant la page principale, les cartes Episodes/Musiques/Lore et le lecteur intégré pour les épisodes.</p>`
+    }
+    // Ajoute d'autres entrées ici si nécessaire
+  ];
+
+  function buildNewsHtml() {
+    const items = NEWS_HISTORY.map((n, idx) => `
+      <article class="news-card" tabindex="0" data-index="${idx}" aria-expanded="false">
+        <div class="meta">
+          <div class="version">v${n.version}</div>
+          <div class="date">${n.date}</div>
+        </div>
+        <div class="teaser">${n.teaser}</div>
+        <div class="detail">${n.detailHtml}</div>
+      </article>
+    `).join('');
+    return `<h2>Nouveautés</h2><div class="news-list">${items}</div>`;
+  }
+
+  function attachNewsHandlers() {
+    // .news-card toggling (expansion)
+    const cards = Array.from(overlayContent.querySelectorAll('.news-card'));
+    cards.forEach(card => {
+      const idx = card.getAttribute('data-index');
+      card.addEventListener('click', (e) => {
+        // toggle expanded state
+        const expanded = card.classList.toggle('expanded');
+        card.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      });
+      // keyboard accessibility
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const expanded = card.classList.toggle('expanded');
+          card.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        }
+      });
     });
   }
-  if (newsBadge) {
-    newsBadge.addEventListener('click', (e) => {
-      e.stopPropagation();
-      markNewsRead();
-    });
-  }
-
-  // Panels content (welcome = en savoir plus)
-  const PANELS = {
-    welcome: `
-      <h2>En savoir plus</h2>
-      <p> Ce site rassemble tout ce qui gravite autour de Brad Bitt : les expériences interactives, les épisodes, les ambiances sonores et les éléments de récit qui donnent vie à ce monde.</p>
-
-      <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l’histoire qui se dessine en arrière-plan.</p>
-
-      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution d[...]
-
-      <p>Utilisez les boutons « Découvrir » et « Voir » pour naviguer librement entre les contenus.</p>
-    `,
-    news: `
-      <h2>Nouveautés</h2>
-      <p>C’est ici que vous trouverez les dernières mises à jour du site et des contenus ajoutés récemment.</p>
-    `,
-    game: `
-      <h2>Brad Bitt — Le jeu</h2>
-      <p>Aperçu du jeu, mécaniques et notes de développement.</p>
-    `
-  };
 
   /* Overlay open/close + video player injection */
   let lastFocused = null;
   function openPanel(key, options = {}) {
     if (!overlay || !overlayContent || !overlayInner) return;
-    const html = PANELS[key] || (options.html || `<p>Contenu à venir</p>`);
+
+    // If it's the news panel, generate dynamic history markup and attach handlers
+    let html;
+    if (key === 'news') {
+      html = buildNewsHtml();
+    } else {
+      html = (PANELS[key] || (options.html || `<p>Contenu à venir</p>`));
+    }
+
     overlayContent.innerHTML = html;
     overlay.classList.remove('hidden');
     overlay.setAttribute('aria-hidden', 'false');
@@ -92,8 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = 'hidden';
     overlayInner.focus();
 
-    // If opening news panel, mark news as read
+    // If opening news panel, mark news as read (runtime)
     if (key === 'news') markNewsRead();
+
+    // attach news handlers if applicable
+    if (key === 'news') {
+      // wait a tick so styles/layout are applied, then attach handlers
+      requestAnimationFrame(() => attachNewsHandlers());
+    }
   }
   function closePanel() {
     if (!overlay) return;
@@ -232,5 +263,19 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => el.classList.add('visible'), 80 * i);
     });
   })();
+
+  // News button handlers (badge / open panel)
+  if (newsBtn) {
+    newsBtn.addEventListener('click', () => {
+      markNewsRead();
+      openPanel('news');
+    });
+  }
+  if (newsBadge) {
+    newsBadge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      markNewsRead();
+    });
+  }
 
 });
