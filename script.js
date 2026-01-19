@@ -49,9 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const NEWS_HISTORY = [
     {
       version: '1.1',
-      date: '2026-01-19',
-      teaser: 'Améliorations du panneau Nouveautés, correctifs UI et bouton "Suivi du jeu".',
-      detailHtml: `<p>Correction du badge "Nouveautés" (masquage au clic sans persistance), ajout d'un historique des versions dans le panneau, bouton "Suivi du jeu" ajouté dans la carte jeu. Corrections d'affichage pour les résumés des épisodes.</p>`
+      date: '2026-02-07',
+      teaser: 'Cette mise à jour apporte plusieurs améliorations importantes pour rendre l’expérience plus claire, plus moderne et plus agréable à utiliser.',
+      detailHtml: `<p>– Une meilleure gestion de la rubrique Nouveautés, avec un affichage plus lisible des mises à jour.
+– La correction du badge “1”, qui disparaît désormais lorsqu’il est consulté.
+– L’ajout d’un bouton “Suivi du jeu” dans la section Brad Bitt, mais le jeu, permettant d’accéder directement au développement du projet.
+– Une optimisation générale de l’interface, notamment sur les cartes et les animations.</p>`
     },
     {
       version: '1.0',
