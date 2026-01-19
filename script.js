@@ -51,10 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
       version: '1.1',
       date: '2026-02-07',
       teaser: 'Cette mise à jour apporte plusieurs améliorations importantes pour rendre l’expérience plus claire, plus moderne et plus agréable à utiliser.',
-      detailHtml: `<p>– Une meilleure gestion de la rubrique Nouveautés, avec un affichage plus lisible des mises à jour.
-– La correction du badge “1”, qui disparaît désormais lorsqu’il est consulté.
-– L’ajout d’un bouton “Suivi du jeu” dans la section Brad Bitt, mais le jeu, permettant d’accéder directement au développement du projet.
-– Une optimisation générale de l’interface, notamment sur les cartes et les animations.</p>`
+      detailHtml: `<p>Amélioration de la rubrique Nouveautés avec un affichage plus clair des versions.</p>
+      <p1>Correction du “1” qui disparaît désormais lorsqu’il est consulté.
+      Ajout d'un bouton "Suivi du jeu" dans la section "Brad Bitt, mais le jeu" pour accéder directement au développement du projet.
+      Optimisation du site sur ordinateur et console.</p1>
     },
     {
       version: '1.0',
