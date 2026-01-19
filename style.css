@@ -146,9 +146,7 @@ html,body{
 .ep-front span{display:block;font-weight:400;font-size:13px;color:var(--muted)}
 .ep-back{background:var(--card); color:var(--text); transform:rotateY(180deg); text-align:center; padding:12px; justify-content:space-between}
 
-/* Correction overflow des résumés (desktop / consoles) :
-   Empêcher le texte de dépasser visuellement la carte et limiter le nombre de lignes,
-   tout en restant lisible et accessible. */
+/* Correction: rendre le résumé scrollable si trop long (desktop / consoles) */
 .ep-back p.ep-summary{
   font-weight:500;
   color:var(--muted);
@@ -156,13 +154,13 @@ html,body{
   line-height:1.4;
   text-align:left;
   width:100%;
-  display:-webkit-box;
-  -webkit-line-clamp:4; /* limite affichée */
-  -webkit-box-orient:vertical;
-  overflow:hidden;
+  max-height:5.6em; /* env. 4 lignes à 1.4 line-height */
+  overflow:auto; /* permet le défilement vertical si le texte dépasse */
   word-wrap:break-word;
   white-space:normal;
   text-overflow:ellipsis;
+  padding-right:6px; /* espace pour la scrollbar */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Video wrapper inside overlay */
