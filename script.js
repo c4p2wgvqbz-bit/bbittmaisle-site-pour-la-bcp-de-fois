@@ -49,17 +49,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const NEWS_HISTORY = [
     {
       version: '1.1',
-      date: '07-02-2026',
+      date: '14-02-2026',
       teaser: 'Cette mise à jour apporte plusieurs améliorations importantes pour rendre l’expérience plus claire, plus moderne et plus agréable à utiliser.',
-      detailHtml: `<p>Amélioration de la rubrique "Nouveautés", avec un affichage plus clair des versions. Correction du badge « 1 », qui disparaît désormais lorsqu’il est consulté. Ajout d’un bouton "Suivi du jeu" dans la section "Brad Bitt, mais le jeu" pour accéder directement au développement du projet. Optimisation générale de l’interface sur ordinateur et console.</p>`
+      detailHtml: `<p>Amélioration de la rubrique "Nouveautés", avec un affichage plus clair des versions. Correction du badge « 1 », qui disparaît désormais lorsqu’il est consulté. Ajout d’un bouton "Suivi du jeu" dans la section "Brad Bitt, mais le jeu" pour accéder directement au développement du projet. Optimisation générale de l’interface sur ordinateur.</p>`
     },
     {
       version: '1.0',
-      date: '14-01-2025',
-      teaser: 'Lancement initial du site vitrine.',
+      date: '14-01-2026',
+      teaser: 'Lancement initial du site.',
       detailHtml: `<p>Première version publique contenant la page principale, les cartes Episodes/Musiques/Lore et le lecteur intégré pour les épisodes.</p>`
     }
-    // Ajoute d'autres entrées ici si nécessaire
+   
   ];
 
   // Panels content (welcome = en savoir plus)
