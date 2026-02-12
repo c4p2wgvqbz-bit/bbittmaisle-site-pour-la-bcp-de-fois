@@ -397,7 +397,7 @@ function initializeMaintenanceAudioPlayer() {
   const iconPause = playBtn.querySelector('.icon-pause');
 
   // Set audio source (UPDATE THIS PATH TO YOUR ACTUAL FILE)
-  audio.src = 'Musiques/Maintenance/v1.1/nom_du_fichier.mp3';
+  audio.src = 'musiques/maintenance/v1.1.mp3';
 
   // Play/Pause button
   playBtn.addEventListener('click', () => {
