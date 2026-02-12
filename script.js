@@ -8,7 +8,7 @@
  * DEACTIVATION: Change maintenanceMode to false
  */
 
-const maintenanceMode = false; // 🎯 TOGGLE THIS: true = maintenance, false = normal
+const maintenanceMode = true; // 🎯 TOGGLE THIS: true = maintenance, false = normal
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!maintenanceMode) return;
