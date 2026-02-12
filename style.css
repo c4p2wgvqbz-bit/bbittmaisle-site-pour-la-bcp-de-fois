@@ -1,3 +1,231 @@
+/* MAINTENANCE MODE STYLING */
+
+.maintenance-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow-y: auto;
+}
+
+.maintenance-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  padding: 40px 20px;
+  max-width: 500px;
+  text-align: center;
+  animation: fadeInMaintenance 0.6s ease-out;
+}
+
+@keyframes fadeInMaintenance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo */
+.maintenance-logo {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.maintenance-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Main content */
+.maintenance-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.maintenance-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.maintenance-subtitle {
+  font-size: 16px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Audio Player */
+.maintenance-player {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.player-header {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.player-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(50, 192, 193, 0.3);
+}
+
+.player-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 24px rgba(50, 192, 193, 0.5);
+}
+
+.player-btn:active {
+  transform: scale(0.96);
+}
+
+.player-btn.playing {
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+}
+
+.player-progress {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: height 0.2s ease;
+}
+
+.progress-bar:hover {
+  height: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  width: 0%;
+  transition: width 0.1s linear;
+  border-radius: 3px;
+}
+
+.time-display {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .maintenance-container {
+    gap: 32px;
+    padding: 24px 16px;
+  }
+
+  .maintenance-logo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .maintenance-title {
+    font-size: 32px;
+  }
+
+  .maintenance-subtitle {
+    font-size: 14px;
+  }
+
+  .maintenance-player {
+    padding: 16px;
+  }
+
+  .player-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Light theme */
+:root[data-theme="light"] .maintenance-overlay {
+  background: var(--bg);
+}
+
+:root[data-theme="light"] .maintenance-logo {
+  background: var(--card);
+  border-color: rgba(7, 16, 20, 0.1);
+}
+
+:root[data-theme="light"] .maintenance-player {
+  background: var(--card);
+  border-color: rgba(7, 16, 20, 0.1);
+}
+
+:root[data-theme="light"] .progress-bar {
+  background: rgba(7, 16, 20, 0.08);
+}
+
 :root{
   --bg:#0b0b0f; --card:#0f1113; --muted:#9aa3b2;
   --accent:#32C0C1; --accent-2:#F53098; --text:#e9eef6;
