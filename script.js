@@ -1,4 +1,147 @@
-// ========================================
+'use strict';
+
+/**
+ * MAINTENANCE MODE SYSTEM v1.1
+ * Simple toggle-based maintenance page for Brad Bitt site
+ * 
+ * ACTIVATION: Change maintenanceMode to true
+ * DEACTIVATION: Change maintenanceMode to false
+ */
+
+const maintenanceMode = false; // 🎯 TOGGLE THIS: true = maintenance, false = normal
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!maintenanceMode) return;
+
+  // Hide main content
+  const appMain = document.getElementById('app-main');
+  const header = document.querySelector('.site-header');
+  if (appMain) appMain.style.display = 'none';
+  if (header) header.style.display = 'none';
+
+  // Create and inject maintenance overlay
+  const maintenanceOverlay = createMaintenanceOverlay();
+  document.body.appendChild(maintenanceOverlay);
+});
+
+function createMaintenanceOverlay() {
+  const overlay = document.createElement('div');
+  overlay.id = 'maintenance-overlay';
+  overlay.className = 'maintenance-overlay';
+  
+  overlay.innerHTML = `
+    <div class="maintenance-container">
+      <!-- Logo -->
+      <div class="maintenance-logo">
+        <img src="images/logo bb site clair.png" alt="Logo Brad Bitt" />
+      </div>
+
+      <!-- Main Text -->
+      <div class="maintenance-content">
+        <h1 class="maintenance-title">Maintenance en cours</h1>
+        <p class="maintenance-subtitle">Pas de panique, le site sera accessible d'ici quelques minutes.</p>
+      </div>
+
+      <!-- Audio Player -->
+      <div class="maintenance-player">
+        <div class="player-header">
+          <span class="artist-name">lılYº</span>
+        </div>
+        
+        <div class="player-controls">
+          <button class="player-btn play-btn" id="maintenance-play-btn" aria-label="Play/Pause">
+            <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20">
+              <polygon points="5 3 19 12 5 21" fill="currentColor" />
+            </svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" style="display:none;">
+              <rect x="6" y="4" width="4" height="16" fill="currentColor" />
+              <rect x="14" y="4" width="4" height="16" fill="currentColor" />
+            </svg>
+          </button>
+
+          <div class="player-progress">
+            <div class="progress-bar" id="maintenance-progress">
+              <div class="progress-fill" id="maintenance-progress-fill"></div>
+            </div>
+            <span class="time-display" id="maintenance-time">0:00 / 0:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <audio id="maintenance-audio" crossorigin="anonymous"></audio>
+  `;
+
+  // Initialize audio player
+  initializeAudioPlayer();
+
+  return overlay;
+}
+
+function initializeAudioPlayer() {
+  const audio = document.getElementById('maintenance-audio');
+  const playBtn = document.getElementById('maintenance-play-btn');
+  const progressBar = document.getElementById('maintenance-progress');
+  const progressFill = document.getElementById('maintenance-progress-fill');
+  const timeDisplay = document.getElementById('maintenance-time');
+  const iconPlay = playBtn.querySelector('.icon-play');
+  const iconPause = playBtn.querySelector('.icon-pause');
+
+  // Set audio source (update this path to your actual file)
+  audio.src = 'Musiques/Maintenance/v1.1/nom_du_fichier.mp3';
+
+  // Play/Pause button
+  playBtn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(err => console.warn('Audio autoplay prevented by browser', err));
+      iconPlay.style.display = 'none';
+      iconPause.style.display = 'block';
+      playBtn.classList.add('playing');
+    } else {
+      audio.pause();
+      iconPlay.style.display = 'block';
+      iconPause.style.display = 'none';
+      playBtn.classList.remove('playing');
+    }
+  });
+
+  // Update progress bar
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressFill.style.width = percent + '%';
+      updateTimeDisplay();
+    }
+  });
+
+  // Clickable progress bar
+  progressBar.addEventListener('click', (e) => {
+    if (audio.duration) {
+      const rect = progressBar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = percent * audio.duration;
+    }
+  });
+
+  // Time display update
+  function updateTimeDisplay() {
+    const minutes = Math.floor(audio.currentTime / 60);
+    const seconds = Math.floor(audio.currentTime % 60);
+    const durationMinutes = Math.floor(audio.duration / 60);
+    const durationSeconds = Math.floor(audio.duration % 60);
+
+    timeDisplay.textContent = 
+      `${minutes}:${seconds.toString().padStart(2, '0')} / ${durationMinutes}:${durationSeconds.toString().padStart(2, '0')}`;
+  }
+
+  // Handle metadata
+  audio.addEventListener('loadedmetadata', updateTimeDisplay);
+  audio.addEventListener('ended', () => {
+    iconPlay.style.display = 'block';
+    iconPause.style.display = 'none';
+    playBtn.classList.remove('playing');
+  });
+}// ========================================
 // MAINTENANCE MODE TOGGLE
 // ========================================
 // 🎯 CHANGE THIS TO ACTIVATE/DEACTIVATE MAINTENANCE MODE
