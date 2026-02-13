@@ -30,78 +30,51 @@
 <body>
   <h1>Site en maintenance.</h1>
   <p>Pas de panique, le site sera accessible d’ici quelques minutes.</p>
-  diff --git a/index.html b/index.html
-index f3b1642a1a6f1a4ec25949232e195ac8f3934e96..a7008c3dfe243b398a3fa0f6f7d20ed8cee75147 100644
---- a/index.html
-+++ b/index.html
-@@ -8,27 +8,70 @@
-     body {
-       background-color: #222;
-       color: #eee;
-       font-family: Arial, sans-serif;
-       height: 100vh;
-       margin: 0;
-       display: flex;
-       justify-content: center;
-       align-items: center;
-       text-align: center;
-       flex-direction: column;
-     }
-     h1 {
-       font-size: 3em;
-       margin-bottom: 0.5em;
-     }
-     p {
-       font-size: 1.5em;
-       color: #aaa;
-     }
-   </style>
- </head>
- <body>
-   <h1>Site en maintenance.</h1>
-   <p>Pas de panique, le site sera accessible d’ici quelques minutes.</p>
-+  <p id="maintenance-duration" style="display: none; color: #fff;">Durée de la maintenance : <span id="countdown"></span></p>
-+  <p id="maintenance-finished" style="display: none; color: #7CFC00;">Le site a été mis à jour, vous pouvez dès à présent actualiser la page.</p>
-+
-+  <script>
-+    const startDate = new Date("2026-02-13T09:12:00");
-+    const countdownDurationMs = 5 * 60 * 1000;
-+    const endDate = new Date(startDate.getTime() + countdownDurationMs);
-+
-+    const durationText = document.getElementById("maintenance-duration");
-+    const countdownText = document.getElementById("countdown");
-+    const finishedText = document.getElementById("maintenance-finished");
-+
-+    function formatTime(ms) {
-+      const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-+      const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
-+      const seconds = String(totalSeconds % 60).padStart(2, "0");
-+      return `${minutes}:${seconds}`;
-+    }
-+
-+    function updateMaintenanceStatus() {
-+      const now = new Date();
-+
-+      if (now < startDate) {
-+        durationText.style.display = "none";
-+        finishedText.style.display = "none";
-+        return;
-+      }
-+
-+      if (now >= endDate) {
-+        durationText.style.display = "none";
-+        finishedText.style.display = "block";
-+        return;
-+      }
-+
-+      const remainingMs = endDate - now;
-+      countdownText.textContent = formatTime(remainingMs);
-+      durationText.style.display = "block";
-+      finishedText.style.display = "none";
-+    }
-+
-+    updateMaintenanceStatus();
-+    setInterval(updateMaintenanceStatus, 1000);
-+  </script>
- </body>
- </html>
+  <script>
+(function() {
+  // Date cible : 14 février 2026 à 9h25
+  var maintenanceStart = new Date(2026, 1, 14, 9, 25, 0); // mois=1 (février)
+  var maintenanceDurationMs = 5 * 60 * 1000; // 5 minutes en ms
+  var now = new Date();
+  
+  if (now >= maintenanceStart && now < new Date(maintenanceStart.getTime() + maintenanceDurationMs)) {
+    // Affiche le compte à rebours
+    var countdownDiv = document.createElement('div');
+    countdownDiv.id = 'maintenance-countdown';
+    countdownDiv.style.marginTop = '2em';
+    
+    var label = document.createElement('p');
+    label.style.fontWeight = 'bold';
+    label.textContent = 'Durée de la maintenance :';
+    countdownDiv.appendChild(label);
+
+    var timer = document.createElement('span');
+    timer.style.fontSize = '2em';
+    countdownDiv.appendChild(timer);
+
+    document.body.appendChild(countdownDiv);
+
+    // Mise à jour du compte à rebours
+    function updateCountdown() {
+      var now = new Date();
+      var end = new Date(maintenanceStart.getTime() + maintenanceDurationMs);
+      var diff = end - now;
+      if (diff > 0) {
+        var mins = Math.floor(diff / 60000);
+        var secs = Math.floor((diff % 60000) / 1000);
+        timer.textContent = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+      } else {
+        timer.textContent = '00:00';
+        label.textContent = 'Le site a été mis à jour, vous pouvez dès à présent actualiser la page.';
+        timer.style.display = 'none';
+        clearInterval(interval);
+      }
+    }
+
+    updateCountdown();
+    var interval = setInterval(updateCountdown, 1000);
+  }
+})();
+</script>
+</body>
+</html>
